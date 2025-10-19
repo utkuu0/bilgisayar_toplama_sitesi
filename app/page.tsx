@@ -1,103 +1,123 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+import { useState, useMemo } from "react";
+import Summary from "@/components/Summary";
+import BottomNavBar from "@/components/BottomNavBar";
+import PartList from "@/components/PartList";
+import {
+    CPU, Motherboard, RAM, GPU, Cooler, Storage,
+    Case, PSU, Monitor, Keyboard, Mouse, BasePart
+} from "@/types/parts";
+import {
+    Cpu, Server, MemoryStick, HardDrive,
+    LayoutDashboard, Power, Tv,
+    Keyboard as KeyboardIcon, Mouse as MouseIcon, Snowflake
+} from "lucide-react";
+import {
+    cpusData, motherboardsData, ramsData, gpusData, coolersData,
+    storagesData, casesData, psusData, monitorsData, keyboardsData, miceData
+} from "@/data";
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
+type CategoryKey =
+    'cpu' | 'motherboard' | 'ram' | 'gpu' | 'cooler' |
+    'storage' | 'case' | 'psu' | 'monitor' | 'keyboard' | 'mouse';
+
+export default function BuilderPage() {
+    const [activeCategoryKey, setActiveCategoryKey] = useState<CategoryKey | null>(null);
+
+    const [selectedCpu, setSelectedCpu] = useState<CPU | null>(null);
+    const [selectedMotherboard, setSelectedMotherboard] = useState<Motherboard | null>(null);
+    const [selectedRam, setSelectedRam] = useState<RAM | null>(null);
+    const [selectedCase, setSelectedCase] = useState<Case | null>(null);
+    const [selectedGpu, setSelectedGpu] = useState<GPU | null>(null);
+    const [selectedCooler, setSelectedCooler] = useState<Cooler | null>(null);
+    const [selectedPsu, setSelectedPsu] = useState<PSU | null>(null);
+    const [selectedStorage, setSelectedStorage] = useState<Storage | null>(null);
+    const [selectedMonitor, setSelectedMonitor] = useState<Monitor | null>(null);
+    const [selectedKeyboard, setSelectedKeyboard] = useState<Keyboard | null>(null);
+    const [selectedMouse, setSelectedMouse] = useState<Mouse | null>(null);
+
+    const handleSelect = (key: CategoryKey, part: BasePart) => {
+        switch (key) {
+            case 'cpu': setSelectedCpu(part as CPU); setSelectedMotherboard(null); setSelectedRam(null); break;
+            case 'motherboard': setSelectedMotherboard(part as Motherboard); setSelectedRam(null); break;
+            case 'ram': setSelectedRam(part as RAM); break;
+            case 'case': setSelectedCase(part as Case); break;
+            case 'gpu': setSelectedGpu(part as GPU); break;
+            case 'cooler': setSelectedCooler(part as Cooler); break;
+            case 'psu': setSelectedPsu(part as PSU); break;
+            case 'storage': setSelectedStorage(part as Storage); break;
+            case 'monitor': setSelectedMonitor(part as Monitor); break;
+            case 'keyboard': setSelectedKeyboard(part as Keyboard); break;
+            case 'mouse': setSelectedMouse(part as Mouse); break;
+        }
+        setActiveCategoryKey(null);
+    };
+
+    const categoryConfigurations = [
+        { key: 'cpu', title: 'İşlemci', IconComponent: Cpu, options: cpusData, disabled: false },
+        { key: 'motherboard', title: 'Anakart', IconComponent: Server, options: motherboardsData, disabled: !selectedCpu },
+        { key: 'ram', title: 'RAM', IconComponent: MemoryStick, options: ramsData, disabled: !selectedMotherboard },
+        { key: 'case', title: 'Kasa', IconComponent: LayoutDashboard, options: casesData, disabled: !selectedMotherboard },
+        { key: 'gpu', title: 'Ekran Kartı', IconComponent: Tv, options: gpusData, disabled: !selectedCase },
+        { key: 'cooler', title: 'Soğutucu', IconComponent: Snowflake, options: coolersData, disabled: !selectedCpu || !selectedCase },
+        { key: 'psu', title: 'PSU', IconComponent: Power, options: psusData, disabled: !selectedCase || !selectedGpu },
+        { key: 'storage', title: 'Depolama', IconComponent: HardDrive, options: storagesData, disabled: false },
+        { key: 'monitor', title: 'Monitör', IconComponent: Tv, options: monitorsData, disabled: false },
+        { key: 'keyboard', title: 'Klavye', IconComponent: KeyboardIcon, options: keyboardsData, disabled: false },
+        { key: 'mouse', title: 'Fare', IconComponent: MouseIcon, options: miceData, disabled: false },
+    ];
+
+    const activeCategoryData = activeCategoryKey ? categoryConfigurations.find(c => c.key === activeCategoryKey) : null;
+
+    const selectedParts = {
+        cpu: selectedCpu, motherboard: selectedMotherboard, ram: selectedRam,
+        case: selectedCase, gpu: selectedGpu, cooler: selectedCooler,
+        psu: selectedPsu, storage: selectedStorage, monitor: selectedMonitor,
+        keyboard: selectedKeyboard, mouse: selectedMouse
+    };
+
+    return (
+        <main className="container mx-auto px-4 py-8">
+            <h1 className="text-4xl font-extrabold mb-6 text-center text-text-main tracking-wider">
+                KENDİN TOPLA
+            </h1>
+
+            {/* Yan yana container */}
+            <div className="flex flex-col lg:flex-row lg:flex-nowrap gap-6 max-w-7xl mx-auto">
+                {/* PartList alanı %70 */}
+                <div className="w-full lg:w-[70%] min-w-0">
+                    {activeCategoryData && !activeCategoryData.disabled ? (
+                        <PartList
+                            title={activeCategoryData.title}
+                            options={activeCategoryData.options as BasePart[]}
+                            onSelect={(part) => handleSelect(activeCategoryData.key as CategoryKey, part)}
+                            onClose={() => setActiveCategoryKey(null)}
+                        />
+                    ) : (
+                        <div className="bg-[#1f2833] rounded-xl p-8 flex flex-col items-center justify-center min-h-[500px] text-center">
+                            <h2 className="text-3xl font-bold mb-4 text-[#66fcf1]">Sistem Toplamaya Başla</h2>
+                            <p className="text-gray-400">Parçaları seçmek için alt menüyü kullan.</p>
+                        </div>
+                    )}
+                </div>
+
+                {/* Summary alanı %30 */}
+                <div className="w-full lg:w-[30%] min-w-0">
+                    <Summary selectedParts={selectedParts} />
+                </div>
+            </div>
+
+            {/* Bottom NavBar */}
+            <div className="mt-6 lg:mt-8">
+                <BottomNavBar
+                    categories={categoryConfigurations}
+                    onCategorySelect={(key) => setActiveCategoryKey(key as CategoryKey)}
+                    activeCategoryKey={activeCategoryKey}
+                    selectedParts={selectedParts}
+                    horizontalLayout
+                />
+            </div>
+        </main>
+    );
 }
