@@ -1,3 +1,27 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+/* Define CSS variables and utility classes to ensure colors work without relying on Tailwind tokens */
+:root {
+	--background: #121827;
+	--surface: #1a2233;
+	--primary: #3b82f6;
+	--primary-hover: #2563eb;
+	--accent: #f59e0b;
+	--text-main: #e5e7eb;
+	--text-secondary: #9ca3af;
+}
+
+/* Utilities matching class names used across the app */
+.bg-background { background-color: var(--background) !important; }
+.bg-surface { background-color: var(--surface) !important; }
+.text-text-main { color: var(--text-main) !important; }
+.text-text-secondary { color: var(--text-secondary) !important; }
+.text-primary { color: var(--primary) !important; }
+.text-accent { color: var(--accent) !important; }
+.hover\:bg-primary-hover:hover { background-color: var(--primary-hover) !important; }
+
+/* Base document colors as a safety net so text is visible immediately */
+html, body {
+	background-color: var(--background);
+	color: var(--text-main);
+}

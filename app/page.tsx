@@ -37,6 +37,21 @@ export default function BuilderPage() {
     const [selectedKeyboard, setSelectedKeyboard] = useState<Keyboard | null>(null);
     const [selectedMouse, setSelectedMouse] = useState<Mouse | null>(null);
 
+    const clearAll = () => {
+        setSelectedCpu(null);
+        setSelectedMotherboard(null);
+        setSelectedRam(null);
+        setSelectedCase(null);
+        setSelectedGpu(null);
+        setSelectedCooler(null);
+        setSelectedPsu(null);
+        setSelectedStorage(null);
+        setSelectedMonitor(null);
+        setSelectedKeyboard(null);
+        setSelectedMouse(null);
+        setActiveCategoryKey(null);
+    };
+
     const handleSelect = (key: CategoryKey, part: BasePart) => {
         switch (key) {
             case 'cpu': setSelectedCpu(part as CPU); setSelectedMotherboard(null); setSelectedRam(null); break;
@@ -104,7 +119,7 @@ export default function BuilderPage() {
 
                 {/* Summary alanı %30 */}
                 <div className="w-full lg:w-[30%] min-w-0">
-                    <Summary selectedParts={selectedParts} />
+                    <Summary selectedParts={selectedParts} onClearAll={clearAll} />
                 </div>
             </div>
 
