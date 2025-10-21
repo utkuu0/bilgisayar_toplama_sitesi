@@ -83,17 +83,18 @@ export default function BuilderPage() {
                 KENDİN TOPLA
             </h1>
 
-            {/* Yan yana container */}
             <div className="flex flex-col lg:flex-row lg:flex-nowrap gap-6 max-w-7xl mx-auto">
                 {/* PartList alanı %70 */}
-                <div className="w-full lg:w-[70%] min-w-0">
+                <div className="w-full lg:w-[70%] min-w-0 flex flex-col">
                     {activeCategoryData && !activeCategoryData.disabled ? (
-                        <PartList
-                            title={activeCategoryData.title}
-                            options={activeCategoryData.options as BasePart[]}
-                            onSelect={(part) => handleSelect(activeCategoryData.key as CategoryKey, part)}
-                            onClose={() => setActiveCategoryKey(null)}
-                        />
+                        <div className="flex-1 min-h-[500px] max-h-[700px] overflow-y-auto">
+                            <PartList
+                                title={activeCategoryData.title}
+                                options={activeCategoryData.options as BasePart[]}
+                                onSelect={(part) => handleSelect(activeCategoryData.key as CategoryKey, part)}
+                                onClose={() => setActiveCategoryKey(null)}
+                            />
+                        </div>
                     ) : (
                         <div className="bg-[#1f2833] rounded-xl p-8 flex flex-col items-center justify-center min-h-[500px] text-center">
                             <h2 className="text-3xl font-bold mb-4 text-[#66fcf1]">Sistem Toplamaya Başla</h2>
@@ -103,7 +104,7 @@ export default function BuilderPage() {
                 </div>
 
                 {/* Summary alanı %30 */}
-                <div className="w-full lg:w-[30%] min-w-0">
+                <div className="w-full lg:w-[30%] min-w-0 flex flex-col">
                     <Summary selectedParts={selectedParts} />
                 </div>
             </div>
