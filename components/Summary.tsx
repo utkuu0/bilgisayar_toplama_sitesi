@@ -1,13 +1,14 @@
-import { SelectedParts } from "@/types/parts";
-import { useMemo } from "react";
-import { PackageCheck } from "lucide-react"; // npm install lucide-react
+import {SelectedParts} from "@/types/parts";
+import {useMemo} from "react";
+import {PackageCheck} from "lucide-react"; // npm install lucide-react
 
 interface SummaryProps {
-    selectedParts: SelectedParts;
-    onClearAll?: () => void;
+    selectedParts: SelectedParts,
+    onClearAll?: () => void,
+    compatibility?: { errors: string[]; warnings: string[] }
 }
 
-export default function Summary({ selectedParts, onClearAll }: SummaryProps) {
+export default function Summary({selectedParts, onClearAll, compatibility}: SummaryProps) {
     const totalPrice = useMemo(() => {
         return Object.values(selectedParts).reduce((total, part) => {
             return total + (part?.fiyat_try || 0);
@@ -22,7 +23,7 @@ export default function Summary({ selectedParts, onClearAll }: SummaryProps) {
         <div className="sticky top-8 bg-surface p-6 rounded-xl shadow-lg">
             <div className="mb-4 pb-3 border-b border-gray-700/50 flex items-center justify-between gap-3">
                 <h2 className="text-2xl font-bold flex items-center gap-3 text-text-main">
-                    <PackageCheck className="text-primary" />
+                    <PackageCheck className="text-primary"/>
                     Sistem Özeti
                 </h2>
                 {onClearAll && (

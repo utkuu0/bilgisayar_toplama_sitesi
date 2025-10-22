@@ -10,6 +10,7 @@ interface PartListProps<T extends BasePart> {
     onSelect: (part: T) => void;
     onClose: () => void;
     maxHeight?: string;
+    compatibilityCheck?: (part: T) => { compatible: boolean; message?: string };
 }
 
 export default function PartList<T extends BasePart>({ title, options, onSelect, onClose, maxHeight = "540px" }: PartListProps<T>) {
